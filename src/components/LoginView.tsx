@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Eye, EyeOff, Lock, Network, User } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, User } from 'lucide-react';
+import { VISUAL_MASTER } from '../utils/apps';
 import { ThemeToggle } from './ThemeToggle';
 import { AvisoErro } from './AvisoErro';
 import { INPUT_CLASS_LG } from '../utils/formStyles';
@@ -41,8 +42,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ avisoInicial, onLoginSucce
   };
   const marca = (
     <div className="flex items-center gap-2.5">
-      <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200/50 dark:shadow-none shrink-0">
-        <Network className="w-5 h-5 text-white" />
+      <div className={`w-9 h-9 ${VISUAL_MASTER.fundo} rounded-xl flex items-center justify-center shadow-lg shadow-blue-200/50 dark:shadow-none shrink-0`}>
+        <VISUAL_MASTER.Icone className="w-5 h-5 text-white" />
       </div>
       <span className="text-sm font-black tracking-wider uppercase text-stone-800 dark:text-stone-100">BM-Master</span>
     </div>

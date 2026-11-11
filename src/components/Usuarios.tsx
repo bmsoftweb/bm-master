@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CadastroCrm } from './CadastroCrm';
 import { Campo, INPUT_CLASS } from './FormCrm';
 import { Toggle } from './Toggle';
+import { AvisoErro } from './AvisoErro';
 import { listar } from '../services/api';
 import { formatarDataHora, simNao } from '../utils/formato';
 import { NOME_PAPEL, ehSuper } from '../utils/menu';
@@ -33,10 +34,12 @@ export const Usuarios: React.FC<{ usuario: Usuario }> = ({ usuario }) => {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [erro, setErro] = useState<string | null>(null);
   useEffect(() => {
-    listar<Empresa>('empresas').then(setEmpresas).catch(() => undefined);
-    listar<Perfil>('perfis').then(setPerfis).catch(() => undefined);
-    listar<Grupo>('grupos').then(setGrupos).catch(() => undefined);
+    const falhou = (err: Error) => setErro(`Não foi possível carregar as opções do formulário: ${err.message}`);
+    listar<Empresa>('empresas').then(setEmpresas).catch(falhou);
+    listar<Perfil>('perfis').then(setPerfis).catch(falhou);
+    listar<Grupo>('grupos').then(setGrupos).catch(falhou);
   }, []);
 
   // Empresa principal e liberadas só do grupo do usuário (o servidor também confere)
@@ -44,6 +47,8 @@ export const Usuarios: React.FC<{ usuario: Usuario }> = ({ usuario }) => {
   const principalDe = (g: number | null) => doGrupo(g).find((e) => e.ativo)?.id ?? null;
 
   return (
+    <>
+    {erro && <AvisoErro mensagem={erro} onFechar={() => setErro(null)} />}
     <CadastroCrm<UsuarioLista, Form>
       cadastro="usuarios"
       titulo="Usuários"
@@ -66,9 +71,11 @@ export const Usuarios: React.FC<{ usuario: Usuario }> = ({ usuario }) => {
         return { login: '', senha: '', grupo_id, empresa_id: principalDe(grupo_id), perfil_id: null, nivel: 'user', ativo: true, empresas: [] };
       }}
       doRegistro={(u) => {
-        // Liberações antigas de empresas de outro grupo saem ao gravar
+        // Liberações antigas de empresas de outro grupo saem ao gravar (só com as empresas carregadas: sem elas,
+        // o filtro apagaria todas as liberações)
         const ids = doGrupo(u.grupo_id).map((e) => e.id);
-        return { login: u.login, senha: '', grupo_id: u.grupo_id, empresa_id: u.empresa_id, perfil_id: u.perfil_id, nivel: u.nivel, ativo: !!u.ativo, empresas: u.empresas.filter((e) => ids.includes(e)) };
+        const liberadas = empresas.length ? u.empresas.filter((e) => ids.includes(e)) : u.empresas;
+        return { login: u.login, senha: '', grupo_id: u.grupo_id, empresa_id: u.empresa_id, perfil_id: u.perfil_id, nivel: u.nivel, ativo: !!u.ativo, empresas: liberadas };
       }}
       campos={(f, alterar, editando) => (
         <>
@@ -149,5 +156,6 @@ export const Usuarios: React.FC<{ usuario: Usuario }> = ({ usuario }) => {
         </>
       )}
     />
+    </>
   );
 };

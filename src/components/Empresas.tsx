@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CadastroCrm } from './CadastroCrm';
 import { Campo, INPUT_CLASS } from './FormCrm';
 import { Toggle } from './Toggle';
+import { AvisoErro } from './AvisoErro';
 import { listar } from '../services/api';
 import { cnpjValido, formatarCnpj, limparCnpj } from '../utils/cnpj';
 import { formatarCep, formatarTelefone, limparDigitos, simNao } from '../utils/formato';
@@ -17,8 +18,11 @@ const TEXTOS = ['nome_fantasia', 'inscricao_estadual', 'inscricao_municipal', 'c
 /** Empresas (sys_empresas) de um grupo: abre pela ação "Empresas" da tela de Grupos. O admin só vê */
 export const Empresas: React.FC<{ usuario: Usuario; grupo: Grupo; onVoltar: () => void }> = ({ usuario, grupo, onVoltar }) => {
   const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [erro, setErro] = useState<string | null>(null);
   useEffect(() => {
-    listar<Grupo>('grupos').then(setGrupos).catch(() => undefined); // sem grupos o select fica vazio e o servidor recusa
+    listar<Grupo>('grupos')
+      .then(setGrupos)
+      .catch((err: Error) => setErro(`Não foi possível carregar os grupos: ${err.message}`));
   }, []);
 
   const texto = (f: Form, alterar: (p: Partial<Form>) => void, k: (typeof TEXTOS)[number], max: number, extra: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
@@ -26,6 +30,8 @@ export const Empresas: React.FC<{ usuario: Usuario; grupo: Grupo; onVoltar: () =
   );
 
   return (
+    <>
+    {erro && <AvisoErro mensagem={erro} onFechar={() => setErro(null)} />}
     <CadastroCrm<Empresa, Form>
       cadastro="empresas"
       titulo="Empresas"
@@ -126,5 +132,6 @@ export const Empresas: React.FC<{ usuario: Usuario; grupo: Grupo; onVoltar: () =
         </>
       )}
     />
+    </>
   );
 };

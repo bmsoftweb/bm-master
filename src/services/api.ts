@@ -42,7 +42,8 @@ export const indicadores = () => get<{ usuarios: number; empresas: number }>('/a
 export type Cadastro = 'grupos' | 'empresas' | 'perfis' | 'usuarios';
 export const listar = <T>(cadastro: Cadastro) => get<T[]>(`/api/${cadastro}`);
 export const salvarCadastro = (cadastro: Cadastro, id: number | null, dados: object) =>
-  chamar<{ id: number }>(id ? 'PUT' : 'POST', id ? `/api/${cadastro}/${id}` : `/api/${cadastro}`, dados);
+  // id 0 é válido (grupo e empresa de demonstração): só null é inclusão
+  chamar<{ id: number }>(id !== null ? 'PUT' : 'POST', id !== null ? `/api/${cadastro}/${id}` : `/api/${cadastro}`, dados);
 export const excluirCadastro = (cadastro: Cadastro, id: number) => chamar<void>('DELETE', `/api/${cadastro}/${id}`);
 
 // ---------- Preferências das listas e formulários (sys_usuarios.config_listas) ----------
@@ -69,7 +70,6 @@ export async function gravarConfigLista(chave: string, valor: unknown) {
 // ---------- Módulos ----------
 /** Árvore de módulos que o usuário acessa (pai_id 0 = raiz) */
 export const meusModulos = () => get<Modulo[]>('/api/modulos');
-/** Endereço de acesso a um módulo, montado no servidor */
-/** volta: o módulo volta para este endereço do Master (com ?erro=) se não conseguir entrar; tema: o modo do Master */
+/** Endereço de acesso a um módulo, montado no servidor. volta:o módulo volta para este endereço do Master (com ?erro=) se não conseguir entrar; tema: o modo do Master */
 export const linkModulo = (id: number) =>
   get<{ url: string }>(`/api/modulos/${id}/link?volta=${encodeURIComponent(window.location.origin + '/')}&tema=${temaAtual()}`);

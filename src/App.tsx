@@ -185,7 +185,7 @@ export default function App() {
             ref={(el) => void (el ? iframes.current.set(a.id, el) : iframes.current.delete(a.id))}
             src={a.url}
             title={a.titulo}
-            className={abaAtiva === a.id ? 'absolute inset-0 w-full h-full border-0 bg-white' : 'hidden'}
+            className={abaAtiva === a.id ? 'absolute inset-0 w-full h-full border-0 bg-white dark:bg-stone-950' : 'hidden'}
           />
         ))}
       </div>

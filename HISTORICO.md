@@ -2,6 +2,17 @@
 
 Mais recente primeiro. PATCH a cada envio ao GitHub; MAJOR/MINOR só quando pedido.
 
+## 0.1.2 — 2026-11-11
+
+Ajustes gerais.
+
+- Corrigido: editar o grupo ou a empresa de código 0 (demonstração) incluía um registro novo em vez de alterar.
+- Usuários: abrir um usuário para editar antes de as empresas carregarem não apaga mais as empresas liberadas dele ao gravar.
+- Usuários e Empresas: falha ao carregar grupos, empresas ou perfis do formulário mostra o aviso de erro (antes as listas ficavam vazias sem explicação).
+- Inativar grupo/empresa e excluir perfil inexistente responde "não encontrado".
+- Logo do login igual ao do menu e da aba; aba de módulo sem fundo branco no modo escuro.
+- Removidas dependências sem uso (`@google/genai`, `@hookform/resolvers`, `jsonwebtoken`, `firebase-tools`).
+
 ## 0.1.1 — 2026-11-11
 
 Primeiro envio ao GitHub.

@@ -275,7 +275,8 @@ export function createApp() {
       `/api/${rotaBase}/:id`,
       rota(async (req, res) => {
         exigirSuper(res);
-        await pool.query(`UPDATE ${tabela} SET ativo = 0 WHERE id = ?`, [id(req.params.id)]);
+        const [r] = await pool.query<ResultSetHeader>(`UPDATE ${tabela} SET ativo = 0 WHERE id = ?`, [id(req.params.id)]);
+        if (!r.affectedRows) throw new ErroApi(404, 'Registro não encontrado.');
       }),
     );
 
@@ -347,7 +348,8 @@ export function createApp() {
     '/api/perfis/:id',
     rota(async (req, res) => {
       exigirSuper(res);
-      await pool.query('DELETE FROM sys_perfis WHERE id = ?', [id(req.params.id)]);
+      const [r] = await pool.query<ResultSetHeader>('DELETE FROM sys_perfis WHERE id = ?', [id(req.params.id)]);
+      if (!r.affectedRows) throw new ErroApi(404, 'Perfil não encontrado.');
     }),
   );
 
