@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Padrão visual dos apps BMsoft (modelo: crmWeb). Jost é carregada em index.html */
+@theme {
+  --font-sans: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Altura compartilhada pelo topo da sidebar e pelo header da área de trabalho,
+     para que a borda inferior dos dois fique na mesma linha. */
+  --altura-topo: 4.375rem; /* 70px */
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+}
+
+/* ==========================================
+   CAMPOS DE ENTRADA
+   Moldura de 1px com cantos arredondados; barra de 2px à esquerda: verde = opcional, âmbar = obrigatório
+   (atributo required). Foco só escurece o fundo, sem anel.
+   .campo-botao = botão que faz papel de campo (ex.: abre um modal de escolha).
+   ========================================== */
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])),
+:where(.campo-botao) {
+  border: 1px solid rgba(120, 113, 108, 0.35) !important;
+  border-left-width: 2px !important;
+  border-left-color: #10b981 !important;
+  border-radius: 0.375rem !important;
+}
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])):where(:required) {
+  border-left-color: #eab308 !important;
+}
+:where(input, select, textarea):where(:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="hidden"])):focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)) !important;
+}
+
+/* Lista aberta do select com a mesma moldura arredondada (select customizável: Chrome/Edge 135+;
+   os outros navegadores ignoram e mostram a lista nativa) */
+@supports (appearance: base-select) {
+  select:not([multiple]),
+  select:not([multiple])::picker(select) {
+    appearance: base-select;
+  }
+  select:not([multiple])::picker(select) {
+    border: 1px solid rgba(120, 113, 108, 0.35);
+    border-radius: 0.375rem;
+    margin-top: 2px;
+    padding: 4px 0;
+    background: #fff;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  }
+  .dark select:not([multiple])::picker(select) {
+    background: #1c1917;
+  }
+  select:not([multiple]) option {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  select:not([multiple]) option::checkmark {
+    display: none;
+  }
+  select:not([multiple]) option:hover,
+  select:not([multiple]) option:focus-visible {
+    background: #eff6ff;
+    outline: none;
+  }
+  select:not([multiple]) option:checked {
+    background: #2563eb;
+    color: #fff;
+  }
+  .dark select:not([multiple]) option:hover,
+  .dark select:not([multiple]) option:focus-visible {
+    background: rgba(23, 37, 84, 0.6);
+  }
+}
+
+/* Layout customizável dos campos do formulário (FormCrm): largura em colunas do grid de 4 e altura do controle */
+@media (min-width: 64rem) {
+  .campo-span {
+    grid-column: span var(--span) / span var(--span);
+  }
+}
+.campo-altura :is(input:not([type='file']), select, textarea) {
+  height: var(--altura);
+}
